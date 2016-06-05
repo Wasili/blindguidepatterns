@@ -18,10 +18,13 @@ public class BlindGuyAI : MonoBehaviour {
     public float animationTime = 1;
     float frameTimer;
     public AudioClip freezeDeath, flameDeath, dazedDeath;
+	public float viewDistance;
 
     Sprite[] triggeredAnimation;
 
     bool dying = false;
+
+	public int health;
 
 	void Start ()
     {
@@ -31,7 +34,8 @@ public class BlindGuyAI : MonoBehaviour {
 	
 	void Update () 
     {
-        transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
+		GameObject.FindObjectOfType<Camera>().orthographicSize = viewDistance;
+		transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
 
         if (dying)
         {
@@ -82,32 +86,39 @@ public class BlindGuyAI : MonoBehaviour {
    
     public void SetDizzyDeath() 
     {
-        Invoke("LoadLevel", 3f);
-        regularSpeed = 0;
-        speed = 0;
-        triggeredAnimation = dizzy;
-        dying = true;
-        AudioSource.PlayClipAtPoint(dazedDeath, transform.position);
+		health -= 1;
+		if (health <= 0) {
+			Invoke("LoadLevel", 3f);
+			regularSpeed = 0;
+			speed = 0;
+			triggeredAnimation = dizzy;
+			dying = true;
+			AudioSource.PlayClipAtPoint(dazedDeath, transform.position);
+		}
     }
 
-    public void SetFlameDeath()
-    {
-        Invoke("LoadLevel", 3f);
-        regularSpeed = 0;
-        speed = 0;
-        triggeredAnimation = burned;
-        dying = true;
-        AudioSource.PlayClipAtPoint(flameDeath, transform.position);
+    public void SetFlameDeath() {
+		health -= 1;
+		if (health <= 0) {
+			Invoke("LoadLevel", 3f);
+			regularSpeed = 0;
+			speed = 0;
+			triggeredAnimation = burned;
+			dying = true;
+			AudioSource.PlayClipAtPoint(flameDeath, transform.position);
+		}
     }
 
-    public void SetFrozenDeath()
-    {
-        Invoke("LoadLevel", 3f);
-        regularSpeed = 0;
-        speed = 0;
-        triggeredAnimation = frozen;
-        dying = true;
-        AudioSource.PlayClipAtPoint(freezeDeath, transform.position);
+    public void SetFrozenDeath() {
+		health -= 1;
+		if (health <= 0) {
+			Invoke("LoadLevel", 3f);
+			regularSpeed = 0;
+			speed = 0;
+			triggeredAnimation = frozen;
+			dying = true;
+			AudioSource.PlayClipAtPoint(freezeDeath, transform.position);
+		}
     }
 
     void AnimateBlindGuy()
