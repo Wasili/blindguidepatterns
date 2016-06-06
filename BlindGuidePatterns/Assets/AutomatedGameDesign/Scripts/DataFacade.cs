@@ -40,6 +40,7 @@ using System.Collections;
         public string attackTime;
         public Type type;
 
+        //depending the type of data got you acess to one or other class
         public void saveLocalData()
         {
             if(spawnTime != null)
