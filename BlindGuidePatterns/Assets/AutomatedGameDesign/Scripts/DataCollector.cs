@@ -17,6 +17,7 @@ public class DataCollector {
 
     public static DataCollector getInstance()
     {
+        //to take care about other DataCollector being created, here is when the pattern is really done
         if (_instance == null) _instance = new DataCollector();
         return _instance;
     }
