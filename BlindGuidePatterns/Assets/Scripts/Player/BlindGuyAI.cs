@@ -18,24 +18,26 @@ public class BlindGuyAI : MonoBehaviour {
     public float animationTime = 1;
     float frameTimer;
     public AudioClip freezeDeath, flameDeath, dazedDeath;
-	public float viewDistance;
+    DataFacade dataFacade = new DataFacade();
 
     Sprite[] triggeredAnimation;
 
     bool dying = false;
-
-	public int health;
+    public int health;
+    public float viewDistance;
 
 	void Start ()
     {
         frameTimer = animationTime;
         regularSpeed = speed;
+        dataFacade.starttime = System.DateTime.Now.ToString();
+        dataFacade.level = (DataFacade.Level) Application.loadedLevel;
     }
 	
 	void Update () 
     {
-		GameObject.FindObjectOfType<Camera>().orthographicSize = viewDistance;
-		transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
+        GameObject.FindObjectOfType<Camera>().orthographicSize = viewDistance;
+        transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
 
         if (dying)
         {
@@ -61,6 +63,8 @@ public class BlindGuyAI : MonoBehaviour {
     {
         if (col.tag == "Finish")
         {
+            dataFacade.endTime = Time.timeSinceLevelLoad.ToString();
+            dataFacade.saveLocalData();
             if (Application.loadedLevelName == "Level10")
             {
                 Application.LoadLevel("PostGameScene");
@@ -84,41 +88,54 @@ public class BlindGuyAI : MonoBehaviour {
     }
 
    
-    public void SetDizzyDeath() 
+    public void SetDizzyDeath(DataMetricObstacle.Obstacle obstacleType) 
     {
-		health -= 1;
-		if (health <= 0) {
-			Invoke("LoadLevel", 3f);
-			regularSpeed = 0;
-			speed = 0;
-			triggeredAnimation = dizzy;
-			dying = true;
-			AudioSource.PlayClipAtPoint(dazedDeath, transform.position);
-		}
+        health -= 1;
+        if (health <= 0) {
+            Invoke("LoadLevel", 3f);
+            regularSpeed = 0;
+            speed = 0;
+            triggeredAnimation = dizzy;
+            dying = true;
+            dataFacade.howPlayerDied = obstacleType.ToString();
+            dataFacade.endTime = Time.timeSinceLevelLoad.ToString();
+            dataFacade.saveLocalData();
+            AudioSource.PlayClipAtPoint(dazedDeath, transform.position);
+        }
     }
 
-    public void SetFlameDeath() {
-		health -= 1;
-		if (health <= 0) {
-			Invoke("LoadLevel", 3f);
-			regularSpeed = 0;
-			speed = 0;
-			triggeredAnimation = burned;
-			dying = true;
-			AudioSource.PlayClipAtPoint(flameDeath, transform.position);
-		}
+    public void SetFlameDeath(DataMetricObstacle.Obstacle obstacleType)
+    {
+        health -= 1;
+        if (health <= 0)
+        {
+            Invoke("LoadLevel", 3f);
+            regularSpeed = 0;
+            speed = 0;
+            triggeredAnimation = burned;
+            dying = true;
+            dataFacade.howPlayerDied = obstacleType.ToString();
+            dataFacade.endTime = Time.timeSinceLevelLoad.ToString();
+            dataFacade.saveLocalData();
+            AudioSource.PlayClipAtPoint(flameDeath, transform.position);
+        }
     }
 
-    public void SetFrozenDeath() {
-		health -= 1;
-		if (health <= 0) {
-			Invoke("LoadLevel", 3f);
-			regularSpeed = 0;
-			speed = 0;
-			triggeredAnimation = frozen;
-			dying = true;
-			AudioSource.PlayClipAtPoint(freezeDeath, transform.position);
-		}
+    public void SetFrozenDeath(DataMetricObstacle.Obstacle obstacleType)
+    {
+        health -= 1;
+        if (health <= 0)
+        {
+            Invoke("LoadLevel", 3f);
+            regularSpeed = 0;
+            speed = 0;
+            triggeredAnimation = frozen;
+            dying = true;
+            dataFacade.howPlayerDied = obstacleType.ToString();
+            dataFacade.endTime = Time.timeSinceLevelLoad.ToString();
+            dataFacade.saveLocalData();
+            AudioSource.PlayClipAtPoint(freezeDeath, transform.position);
+        }
     }
 
     void AnimateBlindGuy()

@@ -12,18 +12,23 @@ public class Geyser : MonoBehaviour {
     public float offsetY = 2.1f;
     GameObject spawnedJet;
     Vector3 myScale;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () {
+    void Start () {
         colBox = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         myScale = transform.localScale;
         StopSpray();
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Geyser;
+    }
 
     public void OnTriggerEnter2D(Collider2D target)
     {
         if (target.gameObject.tag == "IceAttack")
         {
+            dataMetric.howItDied = "Ice";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             frozenState = true;
             spriteRenderer.sprite = frozenSprite;
             colBox.enabled = false;
@@ -33,8 +38,11 @@ public class Geyser : MonoBehaviour {
         if (target.gameObject.tag == "PullableObject") {
             if (target.gameObject.GetComponent<Rollingstones>() != null)
             {
-                if (target.gameObject.GetComponent<Rollingstones>().thrown) 
+                if (target.gameObject.GetComponent<Rollingstones>().thrown)
                 {
+                    dataMetric.howItDied = "Destruction";
+                    dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                    dataMetric.saveLocalData();
                     frozenState = true;
                     spriteRenderer.sprite = brokenSprite;
                     colBox.enabled = false;
@@ -44,6 +52,9 @@ public class Geyser : MonoBehaviour {
             }
             else if (target.gameObject.name == "FallObject")
             {
+                dataMetric.howItDied = "Destruction";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 frozenState = true;
                 spriteRenderer.sprite = brokenSprite;
                 colBox.enabled = false;
@@ -86,5 +97,10 @@ public class Geyser : MonoBehaviour {
         myScale.y = Mathf.Clamp(myScale.y, 0.7f, 1f);
 
         transform.localScale = myScale;
-	}
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
+    }
 }

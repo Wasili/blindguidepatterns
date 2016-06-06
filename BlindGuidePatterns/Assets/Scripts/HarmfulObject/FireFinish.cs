@@ -9,12 +9,14 @@ public class FireFinish : MonoBehaviour {
     public AudioClip blazing;
     SpriteRenderer sRenderer;
     public Sprite normalSprite, fireSprite;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () 
+    void Start () 
     {
         sRenderer = GetComponent<SpriteRenderer>();
         myFlameScript = GetComponent<SetFlameDeath>();
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.FireFinish;
+    }
 	
 	void Update () 
     {
@@ -45,6 +47,9 @@ public class FireFinish : MonoBehaviour {
         {
             if (burning)
             {
+                dataMetric.howItDied = "Ice";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 burning = false;
                 GetComponent<AudioSource>().Stop();
             }
@@ -53,5 +58,10 @@ public class FireFinish : MonoBehaviour {
         {
             burning = true;
         }
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Panther : MonoBehaviour
+public class Panther : FlyWeightEnemy
 {
     public float attackDistance, revealDistance, speed, throwSpeed, frameTime, animationTime, fade, visibility, speedCap, offset;
     float frameTimer, rotate = -20;
@@ -14,18 +14,25 @@ public class Panther : MonoBehaviour
     private bool dead = false;
     public bool isEndBoss = false;
 
-    void Start()
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
+
+    public override void Start()
     {
         frameTimer = animationTime;
         fade = 0;
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         triggeredAnimation = sneaking;
 
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Panther;
+
         if (isEndBoss)
+        {
             GetComponent<Collider2D>().enabled = false;
+            dataMetric.obstacle = DataMetricObstacle.Obstacle.EndBoss;
+        }
     }
 
-    void Update()
+    public override void Update()
     {
         spriteRenderer.color = new Color(255, 255, 255, fade);
         if (!dead)
@@ -60,7 +67,13 @@ public class Panther : MonoBehaviour
         }
     }
 
-    private void Attack()
+    //coded here
+    public override void Awake()
+    {
+
+    }
+
+    public override void Attack()
     {
         if (!dead)
         {
@@ -105,6 +118,10 @@ public class Panther : MonoBehaviour
         {
             if (target.gameObject.tag == "FireAttack")
             {
+                dataMetric.howItDied = "Fire";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
+
                 dead = true;
                 if (!isEndBoss)
                     spriteRenderer.sprite = burnt;
@@ -113,6 +130,10 @@ public class Panther : MonoBehaviour
             }
             else if (target.gameObject.tag == "IceAttack")
             {
+                dataMetric.howItDied = "Ice";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
+
                 dead = true;
                 if (!isEndBoss)
                     spriteRenderer.sprite = frozen;
@@ -135,6 +156,12 @@ public class Panther : MonoBehaviour
             frameTimer = animationTime;
         }
         this.gameObject.GetComponent<SpriteRenderer>().sprite = triggeredAnimation[curSprite];
+    }
+
+
+    public override void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }
 

@@ -4,6 +4,7 @@ using System.Collections;
 public class SetFrozenDeath : MonoBehaviour {
 
     GameObject blindMan;
+    public DataMetricObstacle.Obstacle obstacleType;
 
     void Awake()
     {
@@ -14,7 +15,7 @@ public class SetFrozenDeath : MonoBehaviour {
     {
         if (target.gameObject.tag == "Blindguy")
         {
-            blindMan.GetComponent<BlindGuyAI>().SetFrozenDeath();
+            blindMan.GetComponent<BlindGuyAI>().SetFrozenDeath(obstacleType);
         }
     }
 
@@ -22,7 +23,7 @@ public class SetFrozenDeath : MonoBehaviour {
     {
         if (target.gameObject.tag == "Blindguy")
         {
-            blindMan.GetComponent<BlindGuyAI>().SetFrozenDeath();
+            blindMan.GetComponent<BlindGuyAI>().SetFrozenDeath(obstacleType);
         }
     }
 }

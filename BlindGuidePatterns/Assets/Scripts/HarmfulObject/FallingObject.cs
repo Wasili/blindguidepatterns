@@ -10,13 +10,15 @@ public class FallingObject : MonoBehaviour {
     float rotation;
     float timer;
     bool frozen = false;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () 
+    void Start () 
     {
         blindGuy = GameObject.FindWithTag("Blindguy");
         rotation = -rotationSpeed;
         GetComponent<Rigidbody2D>().gravityScale = 0;
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.FallingRock;
+    }
 	
 	void Update () 
     {
@@ -50,16 +52,31 @@ public class FallingObject : MonoBehaviour {
         {
             transform.Rotate(new Vector3(0, 0, rotation * Time.deltaTime));
         }
+
+        if (blindGuy.transform.position.x > transform.position.x)
+        {
+            dataMetric.howItDied = "Telekinesis";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
+        }
 	}
 
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.tag == "IceAttack" && GetComponent<Rigidbody2D>().gravityScale <= 0)
         {
+            dataMetric.howItDied = "Ice";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             frozen = true;
             baseObject.GetComponent<SpriteRenderer>().sprite = frozenBase;
             GetComponent<SpriteRenderer>().sprite = frozenRock;
             gameObject.tag = "Untagged";
         }
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }

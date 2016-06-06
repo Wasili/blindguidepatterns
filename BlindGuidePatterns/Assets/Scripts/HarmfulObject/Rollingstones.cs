@@ -12,11 +12,15 @@ public class Rollingstones : MonoBehaviour
     Transform myTransform, blindGuyTransform;
     SpriteRenderer spriteRenderer;
 
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
+
     void Start()
     {
         myTransform = transform;
         blindGuyTransform = GameObject.FindWithTag("Blindguy").transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.RollingBoulder;
     }
 
     void Update()
@@ -55,7 +59,12 @@ public class Rollingstones : MonoBehaviour
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, spriteRenderer.color.a - Time.deltaTime);
             gameObject.tag = "Untagged";
             if (myTransform.localScale.x <= 0 || spriteRenderer.color.a <= 0)
+            {
+                dataMetric.defeatedTime = Time.time.ToString();
+                dataMetric.howItDied = "ThrowLimit";
+                dataMetric.saveLocalData();
                 Destroy(gameObject);
+            }
         }
 
         if (spriteRenderer.color.a <= 0)
@@ -74,10 +83,20 @@ public class Rollingstones : MonoBehaviour
     void OnBecameInvisible()
     {
         GetComponent<AudioSource>().Stop();
+
+        //metric data set to thrown behind blind guy
+        if (transform.position.x < blindGuyTransform.position.x)
+        {
+            dataMetric.defeatedTime = Time.time.ToString();
+            dataMetric.howItDied = "BehindBlindGuy";
+            dataMetric.saveLocalData();
+            Destroy(gameObject);
+        }
     }
 
     void OnBecameVisible()
     {
+        dataMetric.spawnTime = Time.time.ToString();
         if (!soundPlayed) 
         {
             GetComponent<AudioSource>().Play();

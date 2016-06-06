@@ -20,12 +20,14 @@ public class MonkeyBusiness : MonoBehaviour {
 
     public float speed = 5f, throwHeight = 5f;
     public Vector3 throwOffset;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () {        
+    void Start () {        
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         throwTimer = throwCooldown;
         deathAnimTimer = deathFrameTime;
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Monkey;
+    }
 
     void Awake()
     {
@@ -81,6 +83,9 @@ public class MonkeyBusiness : MonoBehaviour {
     {
         if (col.gameObject.tag == "FireAttack" && !dead)
         {
+            dataMetric.howItDied = "Fire";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             Die();
         }
     }
@@ -94,5 +99,10 @@ public class MonkeyBusiness : MonoBehaviour {
     {
         Gizmos.color = new Color(0, 200, 200, 0.3f);
         Gizmos.DrawSphere(transform.position, reactionDistance);
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }
