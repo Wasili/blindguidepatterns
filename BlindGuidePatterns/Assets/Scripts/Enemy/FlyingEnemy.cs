@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FlyingEnemy : MonoBehaviour {
+public class FlyingEnemy : FlyWeightEnemy
+{
     enum State { idle, attacking, dead };
     State curState;
 
@@ -15,20 +16,22 @@ public class FlyingEnemy : MonoBehaviour {
     public AudioClip flyAttack;
     int curSprite;
     SpriteRenderer spriteRenderer;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () 
+   public override void Start () 
     {
         curState = State.idle;
         spriteRenderer = GetComponent<SpriteRenderer>();
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.FlyingEnemy;
+    }
 
-    void Awake()
+    public override void Awake()
     {
         blindGuyTransform = GameObject.FindWithTag("Blindguy").transform;
         myTransform = transform;
     }
 
-	void Update () 
+    public override void Update () 
     {
         switch (curState)
         {
@@ -72,7 +75,7 @@ public class FlyingEnemy : MonoBehaviour {
         }
     }
 
-    void Attack()
+    public override void Attack()
     {
         Animate();
         myTransform.position += (blindGuyTransform.position - myTransform.position).normalized * speed * Time.deltaTime;
@@ -96,6 +99,9 @@ public class FlyingEnemy : MonoBehaviour {
         if (col.gameObject.tag == "FireAttack")
         {
             curState = State.dead;
+            dataMetric.howItDied = "Fire";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
         }
     }
 
@@ -103,5 +109,10 @@ public class FlyingEnemy : MonoBehaviour {
     {
         Gizmos.color = new Color(0, 200, 200, 0.3f);
         Gizmos.DrawSphere(transform.position, reactionDistance);
+    }
+
+    public override void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }

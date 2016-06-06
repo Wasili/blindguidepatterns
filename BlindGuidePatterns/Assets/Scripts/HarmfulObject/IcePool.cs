@@ -5,12 +5,14 @@ public class IcePool : MonoBehaviour {
     bool frozen = true;
     SpriteRenderer spriteRenderer;
     Color myColor;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-	void Start () 
+    void Start () 
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         myColor = spriteRenderer.color;
-	}
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.IcePool;
+    }
 	
 	void Update () 
     {
@@ -28,6 +30,9 @@ public class IcePool : MonoBehaviour {
     {
         if (col.gameObject.tag == "FireAttack" && frozen)
         {
+            dataMetric.howItDied = "Fire";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             gameObject.tag = "Untagged";
             frozen = false;
         }

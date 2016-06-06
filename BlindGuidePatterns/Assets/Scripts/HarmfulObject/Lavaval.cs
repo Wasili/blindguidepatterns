@@ -12,11 +12,13 @@ public class Lavaval : MonoBehaviour
     float timer;
     int currentSprite = 1;
     bool reversing;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
     void Start()
     {
         colBox = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Lavafall;
     }
 
     public void OnTriggerEnter2D(Collider2D target)
@@ -26,6 +28,9 @@ public class Lavaval : MonoBehaviour
             frozenState = true;
             spriteRenderer.color = frozenColor;
             colBox.enabled = false;
+            dataMetric.howItDied = "Ice";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
         }
     }
 
@@ -57,5 +62,10 @@ public class Lavaval : MonoBehaviour
             Animate();
             spriteRenderer.sprite = sprites[currentSprite];
         }
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }

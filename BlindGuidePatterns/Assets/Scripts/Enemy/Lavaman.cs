@@ -13,11 +13,13 @@ public class Lavaman : MonoBehaviour {
     Transform blindGuyTransform;
     bool blindGuyInRange = false;
     public AudioClip throwball;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
     void Start()
     {
         attackTimer = attackCooldown;
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Lavaman;
     }
 
     void Awake()
@@ -115,6 +117,9 @@ public class Lavaman : MonoBehaviour {
         {
             if (ice.gameObject.tag == "IceAttack")
             {
+                dataMetric.howItDied = "Ice";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 dead = true;
             }
         }
@@ -124,7 +129,14 @@ public class Lavaman : MonoBehaviour {
         GetComponent<AudioSource>().clip = sound;
         GetComponent<AudioSource>().Play();
     }
- }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
+    }
+
+   
+}
 
 
 

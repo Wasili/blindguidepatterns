@@ -41,18 +41,6 @@ public class PlayerPowerBehaviour : MonoBehaviour {
         timer = 0;
         myTransform = transform;
         frameTimer = animationTime;
-
-        DataCollector.LoadLocalMetricData();
-        for (int i = 0; i < (int)DataCollector.Metric.METRIC_COUNT; i++)
-        {
-            DataCollector.AdjustDataMetric((DataCollector.Metric)i, 1);
-        }
-
-        for (int i = 0; i < (int)DataCollector.Metric.METRIC_COUNT; i++)
-        {
-            Debug.Log(((DataCollector.Metric)i).ToString() + ": " + DataCollector.GetMetricValue((DataCollector.Metric)i));
-        }
-        DataCollector.SaveAllMetricsLocally();
     }
 
     void Update()

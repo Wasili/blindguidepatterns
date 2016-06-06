@@ -13,11 +13,13 @@ public class Snowman : MonoBehaviour
     public bool goLeft, attack2;
     private bool dead = false;
     public AudioClip throwball;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
     void Start()
     {
         attackTimer = attackCooldown;
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Snowman;
     }
 
     void Update()
@@ -110,6 +112,9 @@ public class Snowman : MonoBehaviour
         {
             if (fire.gameObject.tag == "FireAttack")
             {
+                dataMetric.howItDied = "Fire";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 dead = true;
             }
         }
@@ -130,6 +135,9 @@ public class Snowman : MonoBehaviour
 
     void OnBecameInvisible()
     {
+        dataMetric.howItDied = "Ignored";
+        dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+        dataMetric.saveLocalData();
         Destroy(gameObject);
     }
     
@@ -137,6 +145,11 @@ public class Snowman : MonoBehaviour
     {
         GetComponent<AudioSource>().clip = sound;
         GetComponent<AudioSource>().Play();
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Snake : MonoBehaviour
+public class Snake : FlyWeightEnemy
 {
     public SpriteRenderer spriteRenderer;
     //public PolygonCollider2D start, threat, attack;
@@ -10,14 +10,16 @@ public class Snake : MonoBehaviour
     private bool dead = false, firstWarning = true;
     public AudioClip hiss;
     Transform blindGuyTransform;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
-    void Start()
+    public override void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = initial;
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Snake;
     }
 
-    void Awake()
+    public override void Awake()
     {
         blindGuyTransform = GameObject.FindWithTag("Blindguy").transform;
     }
@@ -35,7 +37,8 @@ public class Snake : MonoBehaviour
         }
     }
 
-    void Attacking()
+    //name changed
+    public override void Attack()
     {
         spriteRenderer.sprite = attacking;
         cooldown = maxCooldown;
@@ -49,12 +52,18 @@ public class Snake : MonoBehaviour
             
             if (target.gameObject.tag == "IceAttack")
             {
+                dataMetric.howItDied = "Ice";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 dead = true;
                 spriteRenderer.sprite = frozen;
                 GetComponent<Collider2D>().enabled = false;
             }
             else if (target.gameObject.tag == "FireAttack")
             {
+                dataMetric.howItDied = "Fire";
+                dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+                dataMetric.saveLocalData();
                 dead = true;
                 spriteRenderer.sprite = burnt;
                 GetComponent<Collider2D>().enabled = false;
@@ -62,7 +71,7 @@ public class Snake : MonoBehaviour
         }
     }
 
-    void Update()
+    public override void Update()
     {
         if (blindGuyTransform == null)
             blindGuyTransform = GameObject.FindWithTag("Blindguy").transform;
@@ -81,9 +90,14 @@ public class Snake : MonoBehaviour
             {
                 if (Vector2.Distance(transform.position, blindGuyTransform.position) <= attackRange)
                 {
-                    Attacking();
+                    Attack();
                 }
             }
         }
+    }
+
+    public override void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }

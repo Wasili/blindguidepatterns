@@ -14,10 +14,12 @@ public class Icicle : MonoBehaviour {
     Transform myShatters;
     public bool isSpecial = false;
     public AudioClip icicleImpact;
+    DataMetricObstacle dataMetric = new DataMetricObstacle();
 
     void Start()
     {
         GetComponent<Rigidbody2D>().gravityScale = 0;
+        dataMetric.obstacle = DataMetricObstacle.Obstacle.Icicle;
     }
 
     void Update()
@@ -58,9 +60,12 @@ public class Icicle : MonoBehaviour {
     {
         if (col.gameObject.tag == "FireAttack" && canBeMelted)
         {
+            dataMetric.howItDied = "Fire";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             //if (isSpecial)
             //{
-                myShatters = ((GameObject)Instantiate(IcicleShattered, transform.position, transform.rotation)).transform;
+            myShatters = ((GameObject)Instantiate(IcicleShattered, transform.position, transform.rotation)).transform;
                 gameObject.GetComponent<SpriteRenderer>().enabled = false;
                 gameObject.GetComponent<Collider2D>().enabled = false;
             //}
@@ -70,6 +75,9 @@ public class Icicle : MonoBehaviour {
 
         if (col.gameObject.tag == "IceAttack" && canBeFrozen && !frozen)
         {
+            dataMetric.howItDied = "Ice";
+            dataMetric.defeatedTime = Time.timeSinceLevelLoad.ToString();
+            dataMetric.saveLocalData();
             if (isSpecial)
             {
                 canBeMelted = true;
@@ -106,5 +114,10 @@ public class Icicle : MonoBehaviour {
     {
         GetComponent<AudioSource>().clip = sound;
         GetComponent<AudioSource>().Play();
+    }
+
+    void OnBecameVisible()
+    {
+        dataMetric.spawnTime = Time.timeSinceLevelLoad.ToString();
     }
 }
