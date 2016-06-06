@@ -24,7 +24,7 @@ public class EnemySnowman : MonoBehaviour {
 
 	void BarkEvent() {
 		//attack the player when bark is triggered
-		AttackPlayer();
+		//AttackPlayer();
 	}
 
 	void OnDestroy() {
