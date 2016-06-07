@@ -1,0 +1,6 @@
+uml of entire game
+uml with source from internet for each pattern
+explain structure of the game
+conclusion about what went well and did not go well
+clean up the code snippets
+upload the presentation along with the assignment tonight
